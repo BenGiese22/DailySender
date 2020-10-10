@@ -1,5 +1,8 @@
+from weather import Weather
+
 def main():
-    print('Hello World')
+    
+    weather = Weather('Broomfield', 'CO', 1)
 
 if __name__ == "__main__":
     main()
