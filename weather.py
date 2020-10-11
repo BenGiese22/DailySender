@@ -1,7 +1,9 @@
 # Using the 'Open Weather Map' API
 # Reference: https://openweathermap.org/api/one-call-api
 
+from datetime import datetime
 import requests
+import json
 
 WEATHER_API_KEY = 'becb35ce5edff73926224c138d9520a8'
 API_ENDPOINT = 'https://api.openweathermap.org/data/2.5/onecall?lat={latitude}&lon={longitude}&exclude={exclude}&units={units}&APPID={api_key}'
@@ -12,41 +14,36 @@ class Weather:
 
     latitude = ''
     longitude = ''
-    exclude = ''
-    units = ''
+    exclude = 'current,minutely,hourly,alerts'
+    units = 'imperial'
 
-    def __init__(self, latitude, longitude, exclude, units):
+    low_temp = 0
+    high_temp = 100
+    wind_speed = 0
+    cloud_percentage = 0
+    precipation_probability = 0.00 # Represents a decimal value, 0.29 = 29% chance of preciptation
+
+    # dt = datetime.utcfromtimestamp(int(today_json["dt"]))
+
+    def __init__(self, latitude, longitude):
         self.latitude = latitude
         self.longitude = longitude
-        self.exclude = exclude
-        self.units = units
 
-        self.make_request()
+        json_resp = self.make_request()
+        self.get_todays_forecast(json_resp)
     
     def make_request(self):
         url = API_ENDPOINT.format(latitude=self.latitude,longitude=self.longitude,exclude=self.exclude,units=self.units,api_key=WEATHER_API_KEY)
-        print(url)
         r = requests.get(url)
-        print(r)
-        print(r.text)
+        return json.loads(r.text)
 
-    def get_todays_forecast(self):
-        print('temp')
+    def get_todays_forecast(self, json_str):
+        today_json = json_str["daily"][0]
+        self.low_temp = int(today_json["temp"]["min"])
+        self.high_temp = int(today_json["temp"]["max"])
+        self.wind_speed = int(today_json["wind_speed"])
+        self.cloud_percentage = int(today_json["clouds"])
+        self.precipation_probability = float(today_json["pop"])
 
-
-"""
-import requests
-
-url = "https://rapidapi.p.rapidapi.com/weather"
-
-querystring = {"q":"London,uk","lat":"0","lon":"0","callback":"test","id":"2172797","lang":"null","units":"\"metric\" or \"imperial\"","mode":"xml, html"}
-
-headers = {
-    'x-rapidapi-host': "community-open-weather-map.p.rapidapi.com",
-    'x-rapidapi-key': "SIGN-UP-FOR-KEY"
-    }
-
-response = requests.request("GET", url, headers=headers, params=querystring)
-
-print(response.text)
-"""
+    def pretty_print_json(self, json_str):
+        print(json.dumps(json_str, indent=2))
