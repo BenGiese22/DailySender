@@ -45,5 +45,23 @@ class Weather:
         self.cloud_percentage = int(today_json["clouds"])
         self.precipation_probability = float(today_json["pop"])
 
+    def get_low_temp(self):
+        return self.low_temp
+
+    def get_high_temp(self):
+        return self.high_temp
+
+    def get_wind_speed(self):
+        return self.wind_speed
+
+    def get_cloud_percentage(self):
+        return self.cloud_percentage
+
+    def get_preciptation_propability(self):
+        return self.precipation_probability
+
+    def get_weather_dict(self):
+        return {'low': self.low_temp, 'high': self.high_temp, 'wind_speed': self.wind_speed, 'cloud_percentage': self.cloud_percentage, 'precipitation_probablility': self.precipation_probability}
+
     def pretty_print_json(self, json_str):
         print(json.dumps(json_str, indent=2))
