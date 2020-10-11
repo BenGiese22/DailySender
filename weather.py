@@ -1,34 +1,37 @@
 # Using the 'Open Weather Map' API
+# Reference: https://openweathermap.org/api/one-call-api
 
 import requests
 
 WEATHER_API_KEY = 'becb35ce5edff73926224c138d9520a8'
-API_CALL = 'http://api.openweathermap.org/data/2.5/forecast/daily?q={city name}&cnt={cnt}&mode=json&APPID={API key}'
+API_ENDPOINT = 'https://api.openweathermap.org/data/2.5/onecall?lat={latitude}&lon={longitude}&exclude={exclude}&units={units}&APPID={api_key}'
+
+# exclude param options: current, minutely, hourly, daily, alerts
 
 class Weather:
 
-    city_name = ''
-    num_of_days_forecast = 1
-    
-    def __init__(self, city_name, state_code, num_of_days_forecast):
-        self.city_name = city_name
-        self.state_code = state_code
-        self.num_of_days_forecast = num_of_days_forecast
+    latitude = ''
+    longitude = ''
+    exclude = ''
+    units = ''
 
-        """
-        City name, state code and country code divided by comma, use ISO 3166 country codes.
-        You can specify the parameter not only in English.
-        In this case, the API response should be returned in the same language as the language of requested location name if the location is in our predefined list of more than 200,000 locations.
-        """
+    def __init__(self, latitude, longitude, exclude, units):
+        self.latitude = latitude
+        self.longitude = longitude
+        self.exclude = exclude
+        self.units = units
 
-        self.get_todays_forecast()
+        self.make_request()
     
-    def get_todays_forecast(self):
-        url = API_CALL.replace('{city name}', self.city_name).replace('{cnt}', str(self.num_of_days_forecast)).replace('{API key}', WEATHER_API_KEY)
+    def make_request(self):
+        url = API_ENDPOINT.format(latitude=self.latitude,longitude=self.longitude,exclude=self.exclude,units=self.units,api_key=WEATHER_API_KEY)
         print(url)
-        # r = requests.get(url)
-        # print(r)
-        # print(r.text)
+        r = requests.get(url)
+        print(r)
+        print(r.text)
+
+    def get_todays_forecast(self):
+        print('temp')
 
 
 """
